@@ -1,23 +1,44 @@
-const http = require('http');
+// #############################################################################
+// WebSocket
+// (kudos: https://medium.com/@martin.sikora/node-js-websocket-simple-chat-tutorial-2def3a841b61)
+// #############################################################################
+
+var WebSocketServer = require('websocket').server;
+var http = require('http');
+
+var server = http.createServer(function(request, response) {
+  // process HTTP request. Since we're writing just WebSockets
+  // server we don't have to implement anything.
+});
+server.listen(1337, function() { });
+
+// create the server
+wsServer = new WebSocketServer({
+  httpServer: server
+});
+
+// WebSocket server
+wsServer.on('request', function(request) {
+  var connection = request.accept(null, request.origin);
+
+  // This is the most important callback for us, we'll handle
+  // all messages from users here.
+  connection.on('message', function(message) {
+    if (message.type === 'utf8') {
+      // process WebSocket message
+    }
+  });
+
+  connection.on('close', function(connection) {
+    // close user connection
+  });
+});
+
+// #############################################################################
+// buzz-buzzers
+// #############################################################################
 var buzzBuzzers = require('../buzz-buzzers/src/index')
 var buzzers = buzzBuzzers(); // initialize buzzers
-
-const hostname = '127.0.0.1';
-const port = 3000;
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-
-    console.log(`buzz-buzzers initialized`)
-});
-
-
 
 // Get notified when a button is pressed
 buzzers.onPress(function(ev) {
