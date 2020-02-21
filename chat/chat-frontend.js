@@ -3,6 +3,7 @@ $(function () {
 
     // for better performance - to avoid searching in DOM
     var content = $('#content');
+    var page = $('#body')
     var input = $('#input');
     var status = $('#status');
 
@@ -45,8 +46,30 @@ $(function () {
             console.log('This doesn\'t look like a valid JSON: ', message.data);
             return;
         }
-        addMessage(json.data.text, new Date(json.data.time));
         console.log("Received " + json);
+        addMessage(json.data.text, new Date(json.data.time));
+        if (json.data.button !== null) {
+          switch (json.data.button) {
+            case 0:
+              page.attr('style', 'background-color: red')
+              break;
+            case 1:
+              page.attr('style', 'background-color: blue')
+              break;
+            case 2:
+              page.attr('style', 'background-color: orange')
+              break;
+            case 3:
+              page.attr('style', 'background-color: green')
+              break;
+            case 4:
+              page.attr('style', 'background-color: yellow')
+              break;
+            default:
+
+          }
+
+        }
     };
 
     /**
@@ -64,7 +87,6 @@ $(function () {
             // disable the input field to make the user wait until server
             // sends back response
             input.attr('disabled', 'disabled');
-
         }
     });
 
