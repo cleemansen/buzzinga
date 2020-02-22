@@ -5,6 +5,10 @@ $(function () {
     var lock = false;
     let mirrored = new URLSearchParams(window.location.search).has('mirrored');
     let muted = new URLSearchParams(window.location.search).has('muted');
+    let playerOneDiv = (!mirrored) ? '.left' : '.right'
+    let playerTwoDiv = (!mirrored) ? '.right' : '.left'
+    var playerOneAudio = (!mirrored) ? '#audio-left' : '#audio-right'
+    var playerTwoAudio = (!mirrored) ? '#audio-right' : '#audio-left'
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -32,6 +36,9 @@ $(function () {
       let message = JSON.parse(json.data);
       if (message.type == 'status') {
         console.log("Status message received: %o", message.data);
+        if (message.data.action == 'reload') {
+          reset();
+        }
         return;
       }
       if (message.type == 'buzz-event') {
@@ -47,10 +54,7 @@ $(function () {
         }
         lock = true;
         if (message.data.button !== null) {
-          let playerOneDiv = (!mirrored) ? '.left' : '.right'
-          let playerTwoDiv = (!mirrored) ? '.right' : '.left'
-          var playerOneAudio = (!mirrored) ? '#audio-left' : '#audio-right'
-          var playerTwoAudio = (!mirrored) ? '#audio-right' : '#audio-left'
+
           switch (message.data.controller) {
             case 1:
               $(playerOneDiv).addClass('one-wins');
@@ -66,4 +70,25 @@ $(function () {
         }
       }
     };
+
+    page.keypress(function(event) {
+      if (event.which == 32) {
+        event.preventDefault();
+        console.log("pressed space");
+        connection.send(JSON.stringify({type: 'status', data: { 'action' : 'reload' }}))
+      }
+    });
+
+    function reset() {
+      lock = false;
+      $(playerOneDiv).removeClass('one-wins');
+      $(playerTwoDiv).removeClass('two-wins');
+      stopAudio($(playerOneAudio)[0]);
+      stopAudio($(playerTwoAudio)[0]);
+    }
+
+    function stopAudio(audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
 });

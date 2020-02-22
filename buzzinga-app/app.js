@@ -21,13 +21,13 @@ websocketServer.on('connection', (webSocketClient) => {
 
     //when a message is received
     webSocketClient.on('message', (message) => {
-
+        console.log("Received a web-socket-message: %o", JSON.parse(message))
         //for each websocket client
         websocketServer
           .clients
           .forEach( client => {
               //send the client the current message
-              client.send(`{ "message" : ${message} }`);
+              client.send(message);
           });
     });
 
