@@ -15,6 +15,7 @@ const serverPort = 3000,
 
 //when a websocket connection is established
 websocketServer.on('connection', (webSocketClient) => {
+    console.log("new ws-connection established");
     //send feedback to the incoming connection
     webSocketClient.send(JSON.stringify({ type:'status', data: { "connection" : "ok"} }));
 
@@ -44,7 +45,13 @@ websocketServer.on('connection', (webSocketClient) => {
               controller: ev.controller
           };
       var json = JSON.stringify({ type:'buzz-event', data: obj });
-      webSocketClient.send(json);
+      //for each websocket client
+      websocketServer
+        .clients
+        .forEach( client => {
+            //send the client the current message
+            client.send(json);
+        });
     });
 });
 
