@@ -3,6 +3,8 @@ $(function () {
 
     var page = $('#body');
     var lock = false;
+    var audioLeft = document.getElementById("audio-left");
+    var audioRight = document.getElementById("audio-right");
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -47,10 +49,12 @@ $(function () {
         if (json.data.button !== null) {
           switch (json.data.controller) {
             case 1:
-              $('.left').addClass('left-wins')
+              $('.left').addClass('left-wins');
+              audioLeft.play();
               break;
             case 2:
-              $('.right').addClass('right-wins')
+              $('.right').addClass('right-wins');
+              audioRight.play();
               break;
             case 3:
               page.attr('style', 'background-color: orange')
