@@ -56,19 +56,9 @@ $(function () {
               $('.right').addClass('right-wins');
               audioRight.play();
               break;
-            case 3:
-              page.attr('style', 'background-color: orange')
-              break;
-            case 4:
-              page.attr('style', 'background-color: green')
-              break;
-            case 4:
-              page.attr('style', 'background-color: yellow')
-              break;
             default:
-
+              console.warn("Controller " + json.data.contoller + " not supported!")
           }
-
         }
     };
 });
