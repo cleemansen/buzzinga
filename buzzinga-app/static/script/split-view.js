@@ -16,7 +16,7 @@ $(function () {
     }
 
     // open connection
-    var connection = new WebSocket('ws://127.0.0.1:3000');
+    var connection = new WebSocket('ws://'+window.location.hostname+':3000');
 
     connection.onopen = function () {
         console.log("connection opened: " + connection.readyState);
