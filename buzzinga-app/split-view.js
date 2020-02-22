@@ -37,6 +37,7 @@ $(function () {
 
         if (json.data.button != 0) {
             console.log("Player " + json.data.controller + " pressed the wrong button (was " + json.data.button + ")")
+            return;
         }
         if (lock) {
           console.log(json.data.controller + " was too late!");
