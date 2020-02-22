@@ -38,6 +38,7 @@ var server = http.createServer(function(req, res) {
 });
 server.listen(webSocketsServerPort, function() {
     console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
+    identifyBuzzers();
 });
 
 /**
@@ -140,3 +141,28 @@ buzzers.onChange(function(state) {
 buzzers.onError(function(err) {
 	console.log('Error: ', err);
 });
+
+function identifyBuzzers() {
+  var controller = [true, false, false, false]
+  var round = 0;
+  var interval = setInterval(function() {
+      blinkBuzzerLeds(controller);
+      round++;
+      controller.forEach((item, i) => {
+        controller[i] = (i == round);
+      });
+
+      if (round == 4) {
+        // stop
+        clearInterval(interval)
+      }
+  }, 1000);
+}
+
+function blinkBuzzerLeds(controller) {
+  console.log("Touching controller " + controller)
+  buzzers.setLeds(controller[0], controller[1], controller[2], controller[3]);
+  setTimeout(function() {
+      buzzers.setLeds(false, false, false, false);
+  }, 500);
+}
