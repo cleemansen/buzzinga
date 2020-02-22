@@ -3,8 +3,8 @@ $(function () {
 
     var page = $('#body');
     var lock = false;
-    var audioLeft = document.getElementById("audio-left");
-    var audioRight = document.getElementById("audio-right");
+    var buzzLeftAudio = document.getElementById("audio-left");
+    var buzzRightAudio = document.getElementById("audio-right");
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -50,11 +50,11 @@ $(function () {
           switch (json.data.controller) {
             case 1:
               $('.left').addClass('left-wins');
-              audioLeft.play();
+              buzzLeftAudio.play();
               break;
             case 2:
               $('.right').addClass('right-wins');
-              audioRight.play();
+              buzzRightAudio.play();
               break;
             default:
               console.warn("Controller " + json.data.contoller + " not supported!")
