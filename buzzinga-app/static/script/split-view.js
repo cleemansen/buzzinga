@@ -3,14 +3,7 @@ $(function () {
 
     var page = $('#body');
     var lock = false;
-    var buzzOneAudio = document.getElementById("audio-left");
-    var buzzTwoAudio = document.getElementById("audio-right");
-
-    function mirror() {
-      let mirrored = new URLSearchParams(window.location.search).has('mirrored');
-      console.log("Mirrored? " + mirrored)
-      if (! mirrored) return;
-    }
+    let mirrored = new URLSearchParams(window.location.search).has('mirrored');
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -53,14 +46,18 @@ $(function () {
         }
         lock = true;
         if (message.data.button !== null) {
+          let playerOneDiv = (!mirrored) ? '.left' : '.right'
+          let playerTwoDiv = (!mirrored) ? '.right' : '.left'
+          var playerOneAudio = (!mirrored) ? '#audio-left' : '#audio-right'
+          var playerTwoAudio = (!mirrored) ? '#audio-right' : '#audio-left'
           switch (message.data.controller) {
             case 1:
-              $('.one').addClass('one-wins');
-              buzzOneAudio.play();
+              $(playerOneDiv).addClass('one-wins');
+              $(playerOneAudio)[0].play();
               break;
             case 2:
-              $('.two').addClass('two-wins');
-              buzzTwoAudio.play();
+              $(playerTwoDiv).addClass('two-wins');
+              $(playerTwoAudio)[0].play();
               break;
             default:
               console.warn("Controller " + message.data.contoller + " not supported!")
