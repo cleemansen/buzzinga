@@ -4,6 +4,7 @@ $(function () {
     var page = $('#body');
     var lock = false;
     let mirrored = new URLSearchParams(window.location.search).has('mirrored');
+    let muted = new URLSearchParams(window.location.search).has('muted');
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -53,11 +54,11 @@ $(function () {
           switch (message.data.controller) {
             case 1:
               $(playerOneDiv).addClass('one-wins');
-              $(playerOneAudio)[0].play();
+              if (!muted)$(playerOneAudio)[0].play();
               break;
             case 2:
               $(playerTwoDiv).addClass('two-wins');
-              $(playerTwoAudio)[0].play();
+              if (!muted)$(playerTwoAudio)[0].play();
               break;
             default:
               console.warn("Controller " + message.data.contoller + " not supported!")
