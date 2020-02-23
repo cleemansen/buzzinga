@@ -9,6 +9,7 @@ const serverPort = 3000,
     app = express(),
     server = http.createServer(app),
     ip = require('ip'),
+    qrcode = require('qrcode-terminal'),
     WebSocket = require("ws"),
     websocketServer = new WebSocket.Server({ server }),
     buzzBuzzers = require('../buzz-buzzers/src/index'),
@@ -20,7 +21,9 @@ let roundLocked = false; // first pressed controller wins!
 app.use(express.static('static'))
 //start the web server
 server.listen(serverPort, () => {
-    console.log(`Server started http://` + ip.address() + ":" + serverPort);
+    const ownAddress = "http://" + ip.address() + ":" + serverPort
+    console.log(`Server started ` + ownAddress);
+    qrcode.generate(ownAddress);
     identifyBuzzers();
 });
 
