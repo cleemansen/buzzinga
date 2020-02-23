@@ -8,6 +8,7 @@ const serverPort = 3000,
     express = require("express"),
     app = express(),
     server = http.createServer(app),
+    ip = require('ip'),
     WebSocket = require("ws"),
     websocketServer = new WebSocket.Server({ server }),
     buzzBuzzers = require('../buzz-buzzers/src/index'),
@@ -19,7 +20,7 @@ let roundLocked = false; // first pressed controller wins!
 app.use(express.static('static'))
 //start the web server
 server.listen(serverPort, () => {
-    console.log(`Server started on port ` + serverPort);
+    console.log(`Server started http://` + ip.address() + ":" + serverPort);
     identifyBuzzers();
 });
 
