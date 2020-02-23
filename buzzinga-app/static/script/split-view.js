@@ -94,10 +94,10 @@ $(function () {
             }}));
           buzzView.text(seconds);
           if (seconds == 0) {
-            $('#time-out')[0].play();
+            if (!muted) $('#time-out')[0].play();
             clearInterval(countdownInterval);
           } else {
-            $('#second-beep')[0].play();
+            if (!muted) $('#second-beep')[0].play();
           }
           seconds--;
         }, 1000)
