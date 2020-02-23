@@ -36,7 +36,7 @@ $(function () {
       let message = JSON.parse(json.data);
       if (message.type == 'status') {
         console.log("Status message received: %o", message.data);
-        if (message.data.action == 'reload') {
+        if (message.data.action == 'reset-state') {
           reset();
         }
         return;
@@ -49,6 +49,7 @@ $(function () {
             return;
         }
         if (lock) {
+          // not necessary anymore - this logic is now hosted in the server
           console.log(message.data.controller + " was too late!");
           return;
         }
@@ -74,8 +75,7 @@ $(function () {
     page.keypress(function(event) {
       if (event.which == 32) {
         event.preventDefault();
-        console.log("pressed space");
-        connection.send(JSON.stringify({type: 'status', data: { 'action' : 'reload' }}))
+        connection.send(JSON.stringify({type: 'status', data: { 'action' : 'reset-state' }}))
       }
     });
 

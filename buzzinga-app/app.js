@@ -11,7 +11,10 @@ const serverPort = 3000,
     WebSocket = require("ws"),
     websocketServer = new WebSocket.Server({ server }),
     buzzBuzzers = require('../buzz-buzzers/src/index'),
-    buzzers = buzzBuzzers(); // initialize buzzers
+    buzzers = buzzBuzzers() // initialize buzzers
+    ;
+let roundLocked = false // first pressed controller wins!
+
 
 //when a websocket connection is established
 websocketServer.on('connection', (webSocketClient) => {
@@ -21,8 +24,16 @@ websocketServer.on('connection', (webSocketClient) => {
 
     //when a message is received
     webSocketClient.on('message', (message) => {
-        console.log("Received a web-socket-message: %o", JSON.parse(message))
-        //for each websocket client
+        let json = JSON.parse(message)
+        console.log("Received a web-socket-message: %o", json);
+        if (json.type == 'status') {
+          // console.log("Status message received: %o", json.data.action);
+          if (json.data.action == 'reset-state') {
+            resetState();
+          }
+        }
+
+        // notify each websocket client of this message also
         websocketServer
           .clients
           .forEach( client => {
@@ -38,6 +49,15 @@ websocketServer.on('connection', (webSocketClient) => {
       // - button: Number from 0 to 4. 0 is the big red button.
       var msg = 'Button ' + ev.button + ' on controller ' + ev.controller + ' pressed'
       console.log(msg);
+
+      if (ev.button != 0) return; // only button 0 is valid
+      if (roundLocked) return; // we already have a winner
+
+      // now we have a winner of this round
+      // we decide this here in server and not in the UI b/c we use websocket-connection
+      // to mutliple clients. so it is theoretically possible that two controller signals
+      // will reach the clients.
+      roundLocked = true;
       var obj = {
               time: (new Date()).getTime(),
               text: msg,
@@ -89,6 +109,7 @@ buzzers.onError(function(err) {
 	console.log('Error: ', err);
 });
 
+// this lets blink one controller after each other
 function identifyBuzzers() {
   var controller = [true, false, false, false]
   var round = 0;
@@ -112,4 +133,9 @@ function blinkBuzzerLeds(controller) {
   setTimeout(function() {
       buzzers.setLeds(false, false, false, false);
   }, 500);
+}
+
+function resetState() {
+  roundLocked = false;
+  console.log("resetted state.")
 }
