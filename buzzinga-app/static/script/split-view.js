@@ -81,9 +81,7 @@ $(function () {
     });
 
     function countdown(controller, buzzView, buzzAudio) {
-      if (muted) return;
-
-      buzzAudio.play();
+      // start a countdown on the UI
       countdownDelay = setTimeout(function() {
         let seconds = 5;
         countdownInterval = setInterval(function() {
@@ -104,6 +102,9 @@ $(function () {
           seconds--;
         }, 1000)
       }, 700);
+
+      if (muted) return;
+      buzzAudio.play();
     }
 
     function reset() {
