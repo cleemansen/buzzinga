@@ -7,8 +7,9 @@ $(function () {
     let muted = new URLSearchParams(window.location.search).has('muted');
     let playerOneDiv = (!mirrored) ? '.left' : '.right'
     let playerTwoDiv = (!mirrored) ? '.right' : '.left'
-    var playerOneAudio = (!mirrored) ? '#audio-left' : '#audio-right'
-    var playerTwoAudio = (!mirrored) ? '#audio-right' : '#audio-left'
+    let playerOneAudio = (!mirrored) ? '#audio-left' : '#audio-right'
+    let playerTwoAudio = (!mirrored) ? '#audio-right' : '#audio-left'
+    let countdownDelay, countdownInterval;
 
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -59,11 +60,11 @@ $(function () {
           switch (message.data.controller) {
             case 1:
               $(playerOneDiv).addClass('one-wins');
-              if (!muted)$(playerOneAudio)[0].play();
+              countdown($(playerOneDiv).find('.centered h2'), $(playerOneAudio)[0]);
               break;
             case 2:
               $(playerTwoDiv).addClass('two-wins');
-              if (!muted)$(playerTwoAudio)[0].play();
+              countdown($(playerTwoDiv).find('.centered h2'), $(playerTwoAudio)[0]);
               break;
             default:
               console.warn("Controller " + message.data.contoller + " not supported!")
@@ -79,12 +80,37 @@ $(function () {
       }
     });
 
+    function countdown(buzzView, buzzAudio) {
+      if (muted) return;
+
+      buzzAudio.play();
+      countdownDelay = setTimeout(function() {
+        let seconds = 5;
+        countdownInterval = setInterval(function() {
+          buzzView.text(seconds);
+          if (seconds == 0) {
+            $('#time-out')[0].play();
+            clearInterval(countdownInterval);
+          } else {
+            $('#second-beep')[0].play();
+          }
+          seconds--;
+        }, 1000)
+      }, 700);
+    }
+
     function reset() {
       lock = false;
       $(playerOneDiv).removeClass('one-wins');
       $(playerTwoDiv).removeClass('two-wins');
+      $(playerOneDiv).find('.centered h2').text('');
+      $(playerTwoDiv).find('.centered h2').text('');
       stopAudio($(playerOneAudio)[0]);
       stopAudio($(playerTwoAudio)[0]);
+      clearTimeout(countdownDelay);
+      clearInterval(countdownInterval);
+      stopAudio($('#second-beep')[0]);
+      stopAudio($('#time-out')[0]);
     }
 
     function stopAudio(audio) {

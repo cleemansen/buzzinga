@@ -1,1 +1,2 @@
-Source: https://www.myinstants.com/instant/buzzer-89244/
+- Buzz: https://www.myinstants.com/instant/buzzer-89244/
+- Second Beep: http://soundbible.com/1252-Bleep.html
