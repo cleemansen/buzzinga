@@ -13,7 +13,8 @@ const serverPort = 3000,
     buzzBuzzers = require('../buzz-buzzers/src/index'),
     buzzers = buzzBuzzers() // initialize buzzers
     ;
-let roundLocked = false // first pressed controller wins!
+let roundLocked = false, // first pressed controller wins!
+    panicInterval
 
 // serve static files in directory `static`
 app.use(express.static('static'))
@@ -37,6 +38,15 @@ websocketServer.on('connection', (webSocketClient) => {
           // console.log("Status message received: %o", json.data.action);
           if (json.data.action == 'reset-state') {
             resetState();
+          }
+          if (json.data.action == 'blink') {
+            let ctr = json.data.controller;
+            let controllers = [ctr == 1, ctr == 2, ctr == 3, ctr == 4];
+            if (json.data.time != 0) {
+              blinkBuzzerLeds(controllers);
+            } else {
+              blinkPanic(controllers);
+            }
           }
         }
 
@@ -110,15 +120,34 @@ function identifyBuzzers() {
   }, 1000);
 }
 
+
 function blinkBuzzerLeds(controller) {
+  blinkBuzzerLedsFor(controller, 500);
+}
+
+function blinkBuzzerLedsFor(controller, millis) {
   console.log("Touching controller " + controller)
   buzzers.setLeds(controller[0], controller[1], controller[2], controller[3]);
   setTimeout(function() {
       buzzers.setLeds(false, false, false, false);
-  }, 500);
+  }, millis);
+}
+
+function blinkPanic(controller) {
+  console.log("Panic for controller " + controller);
+  let round = 0;
+  panicInterval = setInterval(function() {
+      blinkBuzzerLedsFor(controller, 100);
+      round++;
+      if (round == 15) {
+        // stop
+        clearInterval(panicInterval);
+      }
+  }, 200);
 }
 
 function resetState() {
   roundLocked = false;
+  clearInterval(panicInterval);
   console.log("resetted state.")
 }

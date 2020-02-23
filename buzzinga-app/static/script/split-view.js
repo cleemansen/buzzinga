@@ -60,11 +60,11 @@ $(function () {
           switch (message.data.controller) {
             case 1:
               $(playerOneDiv).addClass('one-wins');
-              countdown($(playerOneDiv).find('.centered h2'), $(playerOneAudio)[0]);
+              countdown(message.data.controller, $(playerOneDiv).find('.centered h2'), $(playerOneAudio)[0]);
               break;
             case 2:
               $(playerTwoDiv).addClass('two-wins');
-              countdown($(playerTwoDiv).find('.centered h2'), $(playerTwoAudio)[0]);
+              countdown(message.data.controller, $(playerTwoDiv).find('.centered h2'), $(playerTwoAudio)[0]);
               break;
             default:
               console.warn("Controller " + message.data.contoller + " not supported!")
@@ -80,13 +80,20 @@ $(function () {
       }
     });
 
-    function countdown(buzzView, buzzAudio) {
+    function countdown(controller, buzzView, buzzAudio) {
       if (muted) return;
 
       buzzAudio.play();
       countdownDelay = setTimeout(function() {
         let seconds = 5;
         countdownInterval = setInterval(function() {
+          connection.send(JSON.stringify({
+            type: 'status',
+            data: {
+              action : 'blink',
+              controller: controller,
+              time: seconds
+            }}));
           buzzView.text(seconds);
           if (seconds == 0) {
             $('#time-out')[0].play();
