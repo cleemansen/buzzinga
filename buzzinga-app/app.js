@@ -13,8 +13,7 @@ const serverPort = 3000,
     buzzBuzzers = require('../buzz-buzzers/src/index'),
     buzzers = buzzBuzzers() // initialize buzzers
     ;
-let roundLocked = false, // first pressed controller wins!
-    panicInterval
+let roundLocked = false; // first pressed controller wins!
 
 // serve static files in directory `static`
 app.use(express.static('static'))
@@ -136,11 +135,12 @@ function blinkBuzzerLedsFor(controller, millis) {
 function blinkPanic(controller) {
   console.log("Panic for controller " + controller);
   let round = 0;
-  panicInterval = setInterval(function() {
+  let panicInterval = setInterval(function() {
       blinkBuzzerLedsFor(controller, 100);
       round++;
       if (round == 15) {
         // stop
+        console.log("stop panic after " + round + " rounds.")
         clearInterval(panicInterval);
       }
   }, 200);
@@ -148,6 +148,5 @@ function blinkPanic(controller) {
 
 function resetState() {
   roundLocked = false;
-  clearInterval(panicInterval);
   console.log("resetted state.")
 }
